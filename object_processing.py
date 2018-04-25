@@ -73,6 +73,7 @@ class TrackedObject(object):
         self.rotation_vector = None
         self.transform_vector = None
         self.rotation_matrix = None
+        self.noise = 0.0
 
         # transform initial object
         self.transformed_UVW_points = None
@@ -87,58 +88,74 @@ class TrackedObject(object):
     def set_transformation(self, rotation_vector=None, transform_vector=None, noise_scale =0.0):
         self.rotation_vector = np.float64(rotation_vector)
         self.transform_vector = np.float64(transform_vector)
+        self.noise = noise_scale
 
         self.rotation_matrix = generate_rotation_matrix_from_euler_angles(self.rotation_vector)
 
         self.transformed_UVW_points = np.dot(self.UVW_points, self.rotation_matrix) \
-                                      + transform_vector + self.initial_transform_vector
+                                      + transform_vector #+ self.initial_transform_vector
 
         # self.angle_points_projection = self.points2angles(self.transformed_UVW_points, True)
         self.points_projection = np.squeeze(cv2.projectPoints(self.UVW_points,
                                                               self.rotation_vector / 180 * np.pi,
-                                                              self.transform_vector + self.initial_transform_vector,
+                                                              self.transform_vector, #+ self.initial_transform_vector,
                                                               cameraMatrix,
                                                               dist_coefs)[0], 1)
+        self.points_projection_time_steps = self.coordinates_to_time_steps(self.points_projection)
 
-        self.points_projection_noise = self.points_projection +\
-                                       np.random.random(self.points_projection.shape) * \
-                                       noise_scale * (self.points_projection.max() - self.points_projection.min())
+        self.points_projection_time_steps_noise = self.points_projection_time_steps +\
+                                       np.random.random(self.points_projection.shape) * noise_scale
+
+        #
+        # self.points_projection_noise = self.points_projection +\
+        #                                np.random.random(self.points_projection.shape) * \
+        #                                noise_scale * (self.points_projection.max() - self.points_projection.min())
+        return self.points_projection_time_steps_noise
 
         # self.visible_point_coordinates = self.points2angles(self.transformed_UVW_points, False)
         # self.solvePnP()
         # cv2.solvePnP(self.UVW_points , self.angle_coordinates_of_visible_points, cameraMatrix, dist_coefs)
         # self.uv_ideal_points = self.get_projection()
+    def restore_position(self):
+
+        projection_points = self.time_steps_to_coordinates(self.points_projection_time_steps_noise)
+        _, r_restored, t_restored = cv2.solvePnP(self.UVW_points,
+                                                 projection_points.astype(np.float32),
+                                                 cameraMatrix,
+                                                 dist_coefs,
+                                                 tvec=initial_object_pos,
+                                                 flags=cv2.SOLVEPNP_ITERATIVE)
+
+        return np.squeeze(r_restored * 180 / np.pi),np.squeeze(t_restored)
+
 
     #TODO
     def _find_visible_points(self):
         visible_points = self.transformed_UVW_points  # [self.transformed_UVW_points.T[2] <= mean_z]
         return visible_points
 
-    def points2angles(self, points, with_z=False):
-        if with_z:
-            angle_coordinates = np.zeros([len(points), 3])
-            for i, p in enumerate(points):
-                angle_coordinates[i] = [np.arctan(p[0] / p[2]) + np.pi / 2, np.arctan(p[1] / p[2]) + np.pi / 2, p[2]]
-
-        else:
-            angle_coordinates = np.zeros([len(points), 2])
-            for i, p in enumerate(points):
-                angle_coordinates[i] = [np.arctan(p[0] / p[2]) + np.pi / 2, np.arctan(p[1] / p[2]) + np.pi / 2]
-                # angle_coordinates = angle_coordinates/ w_rad / deltaT_counter
-
-        # angle_coordinates[:, :2] = angle_coordinates[:, :-1] / w_rad / deltaT_counter
+    def coordinates_to_time_steps(self, points_projection):
+        angle_coordinates = (np.arctan(points_projection) + np.pi / 2)/ w_rad / deltaT_counter
+        #
+        # for i, p in enumerate(points_projection):
+        #     angle_coordinates[i] = [np.arctan(p) + np.pi / 2, np.arctan(p[1] / p[2]) + np.pi / 2]
+        #     # angle_coordinates = angle_coordinates/ w_rad / deltaT_counter
+        #
+        # # angle_coordinates[:, :2] = angle_coordinates[:, :-1] / w_rad / deltaT_counter
         return angle_coordinates  # * 180 / np.pi
 
-    def angles2points(self, angles):
-        if angles.shape[1] == 2:
-            return None
+    def time_steps_to_coordinates(self, angles):
+        return np.tan(angles*w_rad*deltaT_counter-np.pi / 2)
 
-        points = np.zeros([len(angles), 3])
-        for i, p in enumerate(angles):
-            points[i] = np.tan(p * deltaT_counter * w_rad - np.pi / 2) * p[2]
-        plt.figure(figsize=(6, 6))
-        plt.scatter(points.T[0], points.T[1])
-        plt.title('angle object projection')
+        # if angles.shape[1] == 2:
+        #     return None
+        #
+        # points = np.zeros([len(angles), 3])
+        # for i, p in enumerate(angles):
+        #     points[i] = np.tan(p * deltaT_counter * w_rad - np.pi / 2) * p[2]
+        # plt.figure(figsize=(6, 6))
+        # plt.scatter(points.T[0], points.T[1])
+        # plt.title('angle object projection')
         return points
 
 
@@ -185,7 +202,7 @@ if __name__ == '__main__':
                                              dist_coefs,
                                              tvec=initial_object_pos,
                                              flags = cv2.SOLVEPNP_ITERATIVE)
-    r_restored, t_restored = np.squeeze(r_restored), np.squeeze(t_restored)/6
+    r_restored, t_restored = np.squeeze(r_restored), np.squeeze(t_restored)/60
     print('R: \t\t\t', ", ".join("%.2f" % f for f in (r_restored / np.pi * 180)))
     print('R initial: \t', ", ".join("%.2f" % f for f in cube.rotation_vector))
     print('T: \t\t\t', ", ".join("%.3f" % f for f in t_restored / np.pi * 180))
