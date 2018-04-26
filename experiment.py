@@ -14,10 +14,10 @@ results = pd.DataFrame(columns=['noise',
                                 'restored_rotation_x', 'restored_rotation_y', 'restored_rotation_z',
                                 'restored_translation_x', 'restored_translation_y', 'restored_translation_z'])
 
-noise_scale_to_test = [1000,500,100,50,0] #, 0.0001, 0.001, 0.01, 0.1]
-angles_to_test = np.array([a for a in itertools.combinations_with_replacement(np.linspace(0,330,12), 3)])
+noise_scale_to_test = [100,50,30,10,0] #, 0.0001, 0.001, 0.01, 0.1]
+angles_to_test = np.array([a for a in itertools.product(np.linspace(0,180,5), np.linspace(0,180,5),np.linspace(0,180,5))])
 L_to_test = np.array([500,1000,3000,5000,7000]) #np.linspace(500,6000,12)
-poper_to_test = np.array([t for t in itertools.combinations_with_replacement(np.linspace(-2000,2000, 5), 2)])
+poper_to_test = np.array([t for t in itertools.product(np.linspace(-2000,2000, 5), np.linspace(-2000,2000, 5))])
 
 translates_to_test = np.concatenate([np.repeat(poper_to_test,len(L_to_test),axis=0),
                                     np.expand_dims(np.array([L_to_test] * len(poper_to_test)).flatten(), 1)],
@@ -45,16 +45,4 @@ for n in noise_scale_to_test:
 
     print('noise_lvl ',str(n))
 
-# results['error_r'] = np.sqrt(np.power(results['rotation_x']-results['restored_rotation_x'],2) +
-#                              np.power(results['rotation_y']-results['restored_rotation_y'],2) +
-#                              np.power(results['rotation_z']-results['restored_rotation_z'],2))
-#
-# results['error_t'] = np.sqrt(np.power(results['translation_x']-results['restored_translation_x'],2) +
-#                              np.power(results['translation_y']-results['restored_translation_y'],2) +
-#                              np.power(results['translation_z']-results['restored_translation_z'],2))
-
-results.to_csv('results_'+ (datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + '.csv', decimal=',', sep=';')
-noise_dependence = results.groupby(['noise'])['error_r','error_t'].aggregate([np.mean,np.max])
-plt.figure()
-np.log10(noise_dependence).plot(kind='bar')
-
+results.to_csv('logs\\results_'+ (datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + '.csv', decimal=',', sep=';')
