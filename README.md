@@ -1,14 +1,16 @@
 # Tracking System Parameters Definition
 
 Разрабатываемая в рамках диплома система трекинга работает по принципу Valve Lighthouse ([Видео](https://youtu.be/J54dotTt7k0)) и предназначена для определения пространственного положения (ПП) сложного объекта (человека).
-<img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/cn%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%BD%D0%B0%D1%8F%20%D1%81%D1%85%D0%B5%D0%BC%D0%B0.jpg" width="720">
+<p align="center"><img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/cn%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%BD%D0%B0%D1%8F%20%D1%81%D1%85%D0%B5%D0%BC%D0%B0.jpg" align="center" width="640"><p>
+
 Точность определения координат объекта такой системы зависит от параметров сканирующего пучка
 
 ***
 ## Принцип действия системы
 Датчики, расположенные на объекте трекинга (ОТ), регистрируют временные задержки между световым импульсом синхронизации и временем прихода сканирующего луча. 
-<img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/0.png" width="480">
-
+<p align="center">
+  <img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/0.png" align="center" width="360">
+<p>
 Так как известна угловая скорость вращения ротора, и, соответственно, сканирующего луча, а также частота счетчика, можно перевести значений этих задержек в угловое положение датчиков. 
 Таким образом в качестве входных данных мы имеем угловые координаты всех видимых в данный момент времени датчиков ОТ. 
 Также, заранее известно взаимное расположение всех датчиков на ОТ (U,V,W), которое определяется в момент разработки корпуса ОТ.
