@@ -61,9 +61,7 @@
 Зависимости погрешностb определения перемещения и угловой ориентации объекта в зависимости от его положения в пространстве для различных значений СКО шума на рисунках ниже.
 <p align="center">
   <img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/t_error.png" "Перемещение" width="360">
-  <p>
-   
-  <p align="center">
+&#160; &#160; &#160; &#160; &#160; &#160;
   <img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/r_error.png" width="360">   
 <p>
 
