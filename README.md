@@ -15,8 +15,6 @@
 
 Файл [object_processing.py](https://github.com/Jemaima/scan_system_parameters_definition/blob/master/object_processing.py) содержит класс TrackdObject и реализует преобразование трехмерных координат объекта в данные, получаемые системой. (угловые координаты каждого из датчиков на ОТ). 
 
-Считываем файл, содержащий координаты и нормали всех датчиков, задаем угол поворота и перемещения, получаем набор трехмерных координат после перемещения и поворота.
+Считываем файл, содержащий координаты и нормали всех датчиков, задаем угол поворота и перемещения, получаем набор трехмерных координат после перемещения и поворота. Далее определяем угловые координаты.
 ![alt text](https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/object_processing_1.png?raw=true)
 
-Далее определяем угловые координаты.
-![alt text](https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/object_processing_2.png?raw=true)
