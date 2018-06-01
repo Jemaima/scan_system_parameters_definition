@@ -53,7 +53,7 @@
 
 Зависимость средней погрешности определения ПП объекта по всей рабочей зоне для различных значений СКО координат проекции представлены на графике ниже
 <p align="center">
-  <img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/noise_dep.png" width="360">
+  <img src="https://github.com/Jemaima/scan_system_parameters_definition/blob/master/git_imgs/noise_dep.png" width="480">
 <p>
 
 Проанализировав полученные результаты можно сделать вывод, что максимально допустимое значение погрешности определения временных задержек системой регистрации не должно превышать **2 мкc**.
