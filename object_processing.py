@@ -149,17 +149,17 @@ class TrackedObject(object):
 
 if __name__ == '__main__':
     cube = get_object_from_json()
-    #
-    # coord = [[-1, -1, -1],
-    #          [-1,  1, -1],
-    #          [ 1, -1, -1],
-    #          [ 1,  1, -1],
-    #          [-1, -1,  1],
-    #          [-1,  1,  1],
-    #          [ 1, -1,  1],
-    #          [ 1,  1,  1],
-    #          ]  # * np.random.random([8, 3]) / 10
-    # cube = TrackedObject(coord, initial_transform_vector=initial_object_pos)
+
+    coord = [[-1, -1, -1],
+             [-1,  1, -1],
+             [ 1, -1, -1],
+             [ 1,  1, -1],
+             [-1, -1,  1],
+             [-1,  1,  1],
+             [ 1, -1,  1],
+             [ 1,  1,  1],
+             ]  # * np.random.random([8, 3]) / 10
+    cube = TrackedObject(coord, initial_transform_vector=initial_object_pos)
     # cube = get_object_from_file(initial_transform_vector=initial_object_pos)
 
     # cube = get_object_from_file()
