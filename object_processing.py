@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 
-deltaT_counter = 20 * 10 ** (-9)  # s
-w_rad = 120 * np.pi
+
+# system parameters
+deltaT_counter = 20 * 10 ** (-9)  # s, system clk
+w_rad = 120 * np.pi  # rotor angular velocity
 
 initial_object_pos = np.array([0, 0, 1000], np.float32)  # x,y,z , mm
 
@@ -19,8 +21,6 @@ cameraMatrix = np.array([[1, 0, 0],
 dist_coefs = np.float64([0, 0, 0, 0, 0])
 FILE_NAME = 'object_data\\object.txt'
 JSON_FILE_NAME = 'object_data\\controllers_jsons\\0307final.json'
-
-
 # z - camera axix
 
 
@@ -36,8 +36,8 @@ def get_object_from_file(filename=FILE_NAME, initial_transform_vector=initial_ob
 
 
 def get_object_from_json(filename=JSON_FILE_NAME):
-    object_points = np.array(pd.read_json(JSON_FILE_NAME).lighthouse_config.modelPoints) * 10
-    object_normals = np.array(pd.read_json(JSON_FILE_NAME).lighthouse_config.modelNormals)
+    object_points = np.array(pd.read_json(filename).lighthouse_config.modelPoints) * 10
+    object_normals = np.array(pd.read_json(filename).lighthouse_config.modelNormals)
     return TrackedObject(50 * object_points, [0, 0, 0], initial_object_pos)
 
 
